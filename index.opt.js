@@ -19,11 +19,13 @@ function fit(all = [new Arc()], error = 1/1000) {
     round = el => Math.round(el/error) * error,
     sum = {},
     set = (arc, span) => {
-        let change = arc.span - span;
-        sum.all -= change;
-        sum.arcs -= change;
-
-        return arc.span = span;
+        let change = arc.span - (
+            arc.span = span
+        );
+        for(let k in sum)
+            sum[k] -= change
+        ;
+        return span;
     };
     sum.arcs = sum.all = all.reduce((re, {span}) => 
         re + span
@@ -85,10 +87,8 @@ function fit(all = [new Arc()], error = 1/1000) {
 
         let add = max(offsets, 0),
 
-        fit = one/(1 + (
-
-            add && add/sum.arcs
-        ));
+        fit = one/(1 + add/sum.arcs);
+        
         arcs.forEach(arc => 
 
             set(arc, arc.span/fit)
